@@ -3,31 +3,21 @@ import { chatHistorySampleData } from '../constants/chatHistory'
 import { ChatMessage, Conversation, ConversationRequest, CosmosDBHealth, CosmosDBStatus, UserInfo } from './models'
 
 
-export async function conversationApi(
-  options: ConversationRequest,
-  abortSignal: AbortSignal,
-  navigate: (path: string) => void
-): Promise<Response> {
+export async function conversationApi(options: ConversationRequest, abortSignal: AbortSignal): Promise<Response> {
   const queryParams = new URLSearchParams(window.location.search);
-  const token = queryParams.get("token")
-  const response = await fetch(`/conversation?token=${token}`, {
+  const response = await fetch('/conversation', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       messages: options.messages,
-      CaseID: queryParams.get('CaseID'),
+      CaseID: queryParams.get("CaseID")
     }),
-    signal: abortSignal,
-  });
+    signal: abortSignal
+  })
 
-  // Check if the response status is 401 Unauthorized
-  if (response.status === 401) {
-    navigate('/401Error');
-  }
-
-  return response;
+  return response
 }
 
 export async function getUserInfo(): Promise<UserInfo[]> {
