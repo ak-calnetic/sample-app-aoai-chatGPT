@@ -34,7 +34,6 @@ import { QuestionInput } from '../../components/QuestionInput'
 import { ChatHistoryPanel } from '../../components/ChatHistory/ChatHistoryPanel'
 import { AppStateContext } from '../../state/AppProvider'
 import { useBoolean } from '@fluentui/react-hooks'
-import { useNavigate } from 'react-router-dom'
 
 const enum messageStatus {
   NotRunning = 'Not Running',
@@ -58,7 +57,7 @@ const Chat = () => {
   const [clearingChat, setClearingChat] = useState<boolean>(false)
   const [hideErrorDialog, { toggle: toggleErrorDialog }] = useBoolean(true)
   const [errorMsg, setErrorMsg] = useState<ErrorMessage | null>()
-  const navigate = useNavigate();
+
   const errorDialogContentProps = {
     type: DialogType.close,
     title: errorMsg?.title,
@@ -192,7 +191,7 @@ const Chat = () => {
 
     let result = {} as ChatResponse
     try {
-      const response = await conversationApi(request, abortController.signal, navigate)
+      const response = await conversationApi(request, abortController.signal)
       if (response?.body) {
         const reader = response.body.getReader()
 
