@@ -335,14 +335,22 @@ class _AzureSearchSettings(BaseSettings, DatasourcePayloadConstructor):
         *args,
         **kwargs
     ):
+        
         request = kwargs.pop('request', None)
+        CaseID = kwargs.pop('CaseID', None)
         if request and self.permitted_groups_column:
-            self.filter = self._set_filter_string(request)
+            self.filter = self._set_filter_string(request) + " && search.ismatchscoring('"+ CaseID +"','sfUrl')"
+        else:
+            self.filter = "search.ismatchscoring('"+ CaseID +"','sfUrl')"
             
         self.embedding_dependency = \
             self._settings.azure_openai.extract_embedding_dependency()
         parameters = self.model_dump(exclude_none=True, by_alias=True)
         parameters.update(self._settings.search.model_dump(exclude_none=True, by_alias=True))
+
+        if hasattr(self, 'filter') and self.filter:
+            parameters['filter'] = self.filter
+ 
         
         return {
             "type": self._type,

@@ -258,6 +258,7 @@ def prepare_model_args(request_body, request_headers):
         model_args["extra_body"] = {
             "data_sources": [
                 app_settings.datasource.construct_payload_configuration(
+                    CaseID=request_body.get("CaseID"),
                     request=request
                 )
             ]
