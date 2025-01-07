@@ -28,6 +28,7 @@ from backend.settings import (
     app_settings,
     MINIMUM_SUPPORTED_AZURE_OPENAI_PREVIEW_API_VERSION
 )
+from auth import token_required
 from backend.utils import (
     format_as_ndjson,
     format_stream_response,
@@ -406,6 +407,7 @@ async def conversation_internal(request_body, request_headers):
 
 
 @bp.route("/conversation", methods=["POST"])
+@token_required
 async def conversation():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 415

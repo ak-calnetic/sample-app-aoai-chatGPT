@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { Dialog, Stack, TextField } from '@fluentui/react'
 import { CopyRegular } from '@fluentui/react-icons'
 
@@ -20,6 +20,11 @@ const Layout = () => {
   const [logo, setLogo] = useState('')
   const appStateContext = useContext(AppStateContext)
   const ui = appStateContext?.state.frontendSettings?.ui
+
+  const getTokenFromQueryParams = () => {
+    const params = new URLSearchParams(window.location.search)
+    return params.get('token')
+  }
 
   const handleShareClick = () => {
     setIsSharePanelOpen(true)
@@ -72,6 +77,14 @@ const Layout = () => {
 
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = getTokenFromQueryParams()
+    if (!token) {
+      navigate('/401Error')
+    }
+  }, [navigate])
 
   return (
     <div className={styles.layout}>
