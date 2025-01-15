@@ -977,7 +977,7 @@ const Chat = () => {
                 onClick={() => onViewSource(activeCitation)}>
                 {activeCitation.title}
               </h5>
-              <div tabIndex={0}>
+              <div tabIndex={0} style={{ width: '100%' }}>
                 <ReactMarkdown
                   linkTarget="_blank"
                   className={styles.citationPanelContent}
