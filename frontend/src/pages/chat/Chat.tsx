@@ -35,6 +35,7 @@ import {
 } from "../../api";
 import { Answer } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
+import { PreBuiltPrompt } from '../../components/PreBuiltPrompt/PreBuiltPrompt'
 import { ChatHistoryPanel } from "../../components/ChatHistory/ChatHistoryPanel";
 import { AppStateContext } from "../../state/AppProvider";
 import { useBoolean } from "@fluentui/react-hooks";
@@ -895,7 +896,7 @@ const Chat = () => {
                     aria-label="start a new chat button"
                   />
                 )}
-                <CommandBarButton
+                {/* <CommandBarButton
                   role="button"
                   styles={{
                     icon: {
@@ -926,7 +927,7 @@ const Chat = () => {
                   }
                   disabled={disabledButton()}
                   aria-label="clear chat button"
-                />
+                /> */}
                 <Dialog
                   hidden={hideErrorDialog}
                   onDismiss={handleErrorDialogClose}
@@ -946,7 +947,23 @@ const Chat = () => {
                   appStateContext?.state.currentChat?.id ? appStateContext?.state.currentChat?.id : undefined
                 }
               />
+              <PreBuiltPrompt 
+                clearOnSend
+                placeholder="Type a new question..."
+                disabled={isLoading}
+                onSend={(question, id) => {
+                  appStateContext?.state.isCosmosDBAvailable?.cosmosDB
+                    ? makeApiRequestWithCosmosDB(question, id)
+                    : makeApiRequestWithoutCosmosDB(question, id)
+                }}
+                conversationId={
+                  appStateContext?.state.currentChat?.id ? appStateContext?.state.currentChat?.id : undefined
+                }
+                
+                messageList={messages}
+              />  
             </Stack>
+            
           </div>
           {/* Citation Panel */}
           {messages && messages.length > 0 && isCitationPanelOpen && activeCitation && (
