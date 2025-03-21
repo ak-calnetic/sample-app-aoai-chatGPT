@@ -7,8 +7,18 @@ export async function conversationApi(
   abortSignal: AbortSignal,
   navigate: (path: string) => void
 ): Promise<Response> {
+  console.log(new Date(Date.now()).toString())
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get("token")
+  // Add extra message for testing
+  const userPrompts = await getUsrPromptFromServer(token);
+  const systemPrompts = await getSysPromptFromServer(token);
+  for(var userPrompt in userPrompts){
+    options.messages.push({id: userPrompts[userPrompt].ID, role: 'user', date: new Date().toISOString(), content: userPrompts[userPrompt].Description});
+  }
+  for(var systemPrompt in systemPrompts){
+    options.messages.push({id: systemPrompts[systemPrompt].ID, role: 'system', date: new Date().toISOString(), content: systemPrompts[systemPrompt].Description});
+  }
   const response = await fetch(`/conversation?token=${token}`, {
     method: 'POST',
     headers: {
@@ -20,13 +30,43 @@ export async function conversationApi(
     }),
     signal: abortSignal
   })
-
   // Check if the response status is 401 Unauthorized
   if (response.status === 401) {
     navigate('/401Error');
   }
-
   return response
+}
+// get user prompts from server
+const getUsrPromptFromServer = async(token: any) => {
+  let paramValueDK: any = {};
+  paramValueDK["sort"] = [{ "name": 'Name', "order": 'asc' }];
+  paramValueDK["filters"] = [{ name: 'DomainKnowledgeCategoryID', value: '27d3128c-b084-425f-b24a-245d98205370', op: 'like' }]
+  const response = await fetch(`https://api.casetools.truckaccidents.com/crud/DomainKnowledge?taql=${encodeURI(JSON.stringify(paramValueDK))}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'token': `${token}`
+    }
+  });
+  const result = await response.json();
+  return result.data;
+}
+// get system prompts from server
+const getSysPromptFromServer = async(token: any) => {
+  let paramValueDK: any = {};
+  paramValueDK["sort"] = [{ "name": 'Name', "order": 'asc' }];
+  paramValueDK["filters"] = [{ name: 'ID', value: 'f74d4cb0-70ff-4f94-b571-c6b40bbf24d7', op: 'like' }]
+  // paramValueDK["filters"] = [{ name: 'ID', value: 'd84f411f-b134-427d-bab8-ca13baf08005', op: 'like' }]
+  
+  const response = await fetch(`https://api.casetools.truckaccidents.com/crud/DomainKnowledge?taql=${encodeURI(JSON.stringify(paramValueDK))}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'token': `${token}`
+    }
+  });
+  const result = await response.json();
+  return result.data;
 }
 
 export async function getUserInfo(): Promise<UserInfo[]> {

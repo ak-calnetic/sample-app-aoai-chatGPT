@@ -58,8 +58,6 @@ export const PreBuiltPrompt = ({ onSend, disabled, placeholder, clearOnSend, con
     
     
   const sendQuestion = async() => {
-    console.log('sendQuestion called: ', question);
-    
     const questionTest: ChatMessage["content"] =  question.toString();
 
     if (conversationId && questionTest !== undefined) {
