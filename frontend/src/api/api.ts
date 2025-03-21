@@ -7,7 +7,6 @@ export async function conversationApi(
   abortSignal: AbortSignal,
   navigate: (path: string) => void
 ): Promise<Response> {
-  console.log(new Date(Date.now()).toString())
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get("token")
   // Add extra message for testing
