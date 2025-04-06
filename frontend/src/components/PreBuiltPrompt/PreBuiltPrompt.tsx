@@ -7,6 +7,13 @@ import styles from './PreBuiltPrompt.module.css'
 import { ChatMessage } from '../../api'
 import { AppStateContext } from '../../state/AppProvider'
 import { resizeImage } from '../../utils/resizeImage'
+
+
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+
 interface Props {
   onSend: (question: ChatMessage['content'], id?: string) => void
   disabled: boolean
@@ -23,6 +30,18 @@ export const PreBuiltPrompt = ({ onSend, disabled, placeholder, clearOnSend, con
   const [base64Image, setBase64Image] = useState<string | null>(null);
   const appStateContext = useContext(AppStateContext)
   const OYD_ENABLED = appStateContext?.state.frontendSettings?.oyd_enabled || false;
+
+  const [numPages, setNumPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setPageNumber(1); // Reset to first page when document loads
+  };
+
+  const goToPrevPage = () => setPageNumber(prev => Math.max(prev - 1, 1));
+  const goToNextPage = () => setPageNumber(prev => Math.min(prev + 1, numPages));
+
 
   useEffect(() => {
     getPromptFromServer();
@@ -125,6 +144,7 @@ export const PreBuiltPrompt = ({ onSend, disabled, placeholder, clearOnSend, con
 
 
   return (
+    <>
     <Stack horizontal className={styles.prebuiltPromptContainer}>
       <div className={ styles.prebuiltPromptContainerMainDiv }>
       {
@@ -143,8 +163,30 @@ export const PreBuiltPrompt = ({ onSend, disabled, placeholder, clearOnSend, con
       <div className={ styles.prebuiltPromptContainerSecondDiv } title='Download last response'>
         <ArrowDownloadFilled fontSize={30}   title="Download last response" onClick={getLastMessage} className={ styles.prebuiltDownloadButton } />
       </div>
+
+      </Stack>
+      {/* <Stack>
+
+<div className="flex flex-col items-center gap-4">
+      <Document file={`https://truckaccindents001.blob.core.windows.net/truck-accidents-blob/0bbcfef9-9665-43b4-93e6-c5d57c1ebb03/02-Investigation/GoFundMe.pdf`} onLoadSuccess={onDocumentLoadSuccess}>
+        <Page pageNumber={pageNumber} />
+      </Document>
+
+      <div className="flex gap-2 items-center">
+        <button onClick={goToPrevPage} disabled={pageNumber === 1}>
+          Prev
+        </button>
+        <span>
+          Page {pageNumber} of {numPages}
+        </span>
+        <button onClick={goToNextPage} disabled={pageNumber === numPages}>
+          Next
+        </button>
+      </div>
+    </div>
         
-    </Stack>
+    </Stack> */}
+    </>
     
   )
 }
