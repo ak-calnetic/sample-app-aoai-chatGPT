@@ -10,14 +10,14 @@ export async function conversationApi(
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get("token")
   // Add extra message for testing
-  const userPrompts = await getUsrPromptFromServer(token);
-  const systemPrompts = await getSysPromptFromServer(token);
-  for(var userPrompt in userPrompts){
-    options.messages.push({id: userPrompts[userPrompt].ID, role: 'user', date: new Date().toISOString(), content: userPrompts[userPrompt].Description});
-  }
-  for(var systemPrompt in systemPrompts){
-    options.messages.push({id: systemPrompts[systemPrompt].ID, role: 'system', date: new Date().toISOString(), content: systemPrompts[systemPrompt].Description});
-  }
+  // const userPrompts = await getUsrPromptFromServer(token);
+  // const systemPrompts = await getSysPromptFromServer(token);
+  // for(var userPrompt in userPrompts){
+  //   options.messages.push({id: userPrompts[userPrompt].ID, role: 'user', date: new Date().toISOString(), content: userPrompts[userPrompt].Description});
+  // }
+  // for(var systemPrompt in systemPrompts){
+  //   options.messages.push({id: systemPrompts[systemPrompt].ID, role: 'system', date: new Date().toISOString(), content: systemPrompts[systemPrompt].Description});
+  // }
   const response = await fetch(`/conversation?token=${token}`, {
     method: 'POST',
     headers: {
@@ -33,6 +33,9 @@ export async function conversationApi(
   if (response.status === 401) {
     navigate('/401Error');
   }
+
+  console.log('Response:', response);
+
   return response
 }
 // get user prompts from server
