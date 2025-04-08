@@ -102,12 +102,12 @@
   flex-grow: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
-  max-width: 80%;
+  max-width: 70%;
 }
 
 .chatMessageGpt {
   margin-bottom: 12px;
-  max-width: 80%;
+  max-width: 70%;
   display: flex;
 }
 
@@ -121,7 +121,7 @@
   flex: none;
   order: 0;
   flex-grow: 0;
-  max-width: 800px;
+  max-width: 700px;
   margin-bottom: 12px;
 }
 
@@ -251,7 +251,8 @@
   order: 0;
   align-self: stretch;
   flex-grow: 0.3;
-  max-width: 30%;
+  max-width: 40%;
+  min-width: 40%;
   overflow-y: scroll;
   max-height: calc(100vh - 100px);
 }
@@ -399,4 +400,11 @@ a {
   .citationPanel {
     max-width: 100%;
   }
+}
+
+.prebuiltPromptButton {
+  margin: 5px;
+  min-width: 50px;
+  height: 22px;
+  padding: 0px 5px;
 }

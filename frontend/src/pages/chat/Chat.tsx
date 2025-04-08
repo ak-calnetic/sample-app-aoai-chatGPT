@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useContext, useLayoutEffect } from 'react'
-import { CommandBarButton, IconButton, Dialog, DialogType, Stack } from '@fluentui/react'
+import { DefaultButton,CommandBarButton, IconButton, Dialog, DialogType, Stack } from '@fluentui/react'
 import { SquareRegular, ShieldLockRegular, ErrorCircleRegular } from '@fluentui/react-icons'
 
 import ReactMarkdown from 'react-markdown'
@@ -14,6 +14,14 @@ import { nord } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import styles from './Chat.module.css'
 import Contoso from '../../assets/Contoso.svg'
 import { XSSAllowTags } from '../../constants/sanatizeAllowables'
+
+
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+
+
 
 import {
   ChatMessage,
@@ -85,6 +93,20 @@ const Chat = () => {
 
   const [ASSISTANT, TOOL, ERROR] = ['assistant', 'tool', 'error']
   const NO_CONTENT_ERROR = 'No content in messages object.'
+
+  // open pdf
+  const [numPages, setNumPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setPageNumber(1); // Reset to first page when document loads
+  };
+
+  const goToPrevPage = () => setPageNumber(prev => Math.max(prev - 1, 1));
+  const goToNextPage = () => setPageNumber(prev => Math.min(prev + 1, numPages));
+
+
 
   useEffect(() => {
     if (
@@ -995,6 +1017,22 @@ const Chat = () => {
                 {activeCitation.title}
               </h5>
               <div tabIndex={0} style={{ width: '100%' }}>
+                {
+                  ( activeCitation?.url?.indexOf(".pdf") != -1) && 
+                  <>
+                  <Document file={ activeCitation.url } onLoadSuccess={onDocumentLoadSuccess}>
+                    <Page pageNumber={pageNumber} />
+                  </Document>
+                  <div className="flex gap-2 items-center">
+                    <DefaultButton text={'Prev'} onClick={()=>goToPrevPage()} disabled={pageNumber === 1} className={ styles.prebuiltPromptButton }/>
+                    <span>
+                      Page {pageNumber} of {numPages}
+                    </span>
+                    <DefaultButton text={'Next'} onClick={()=>goToNextPage()} disabled={pageNumber === numPages} className={ styles.prebuiltPromptButton }/>
+                  </div>
+                  </>
+                }
+                { ( activeCitation?.url?.indexOf(".pdf") == -1) && 
                 <ReactMarkdown
                   linkTarget="_blank"
                   className={styles.citationPanelContent}
@@ -1002,6 +1040,9 @@ const Chat = () => {
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeRaw]}
                 />
+                }
+
+                  
               </div>
             </Stack.Item>
           )}
