@@ -10,11 +10,11 @@ export async function conversationApi(
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get("token")
   // Add extra message for testing
-  // const userPrompts = await getUsrPromptFromServer(token);
+  const userPrompts = await getUsrPromptFromServer(token);
   // const systemPrompts = await getSysPromptFromServer(token);
-  // for(var userPrompt in userPrompts){
-  //   options.messages.push({id: userPrompts[userPrompt].ID, role: 'system', date: new Date().toISOString(), content: userPrompts[userPrompt].Description});
-  // }
+  for(var userPrompt in userPrompts){
+    options.messages.push({id: userPrompts[userPrompt].ID, role: 'user', date: new Date().toISOString(), content: userPrompts[userPrompt].Description});
+  }
 
   // let userPromptContent = '\n\nAlso consider the following below points while responding:\n\n';
   // for(var userPrompt in userPrompts){
