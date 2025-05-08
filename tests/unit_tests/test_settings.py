@@ -49,7 +49,7 @@ def test_dotenv_with_azure_search_success(app_settings):
     assert payload["type"] == "azure_search"
     assert payload["parameters"] is not None
     assert payload["parameters"]["endpoint"] == "https://search_service.search.windows.net"
-    print(payload)
+    assert payload["parameters"]["top"] == "500"
 
 
 def test_dotenv_with_elasticsearch_success(app_settings):
