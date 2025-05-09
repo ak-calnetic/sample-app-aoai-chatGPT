@@ -10,7 +10,6 @@ export async function conversationApi(options: ConversationRequest, abortSignal:
   for(var userPrompt in userPrompts){
     options.messages.push({id: userPrompts[userPrompt].ID, role: 'user', date: new Date().toISOString(), content: userPrompts[userPrompt].Description});
   }
-
   const response = await fetch('/conversation', {
     method: 'POST',
     headers: {
