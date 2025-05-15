@@ -344,7 +344,7 @@ class _AzureSearchSettings(BaseSettings, DatasourcePayloadConstructor):
         CaseID = kwargs.pop('CaseID', None)
         case_id_filter = ''
         if CaseID is not None and CaseID != "":
-            case_id_filter = "search.ismatchscoring('"+ CaseID +"','sfUrl','full','all')"
+            case_id_filter = "search.ismatchscoring('"+ CaseID +"','sfUrl')"
 
         if request and self.permitted_groups_column:
             self.filter = self._set_filter_string(request) + " && " + case_id_filter
