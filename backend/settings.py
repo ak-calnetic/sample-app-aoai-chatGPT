@@ -226,7 +226,6 @@ class _SearchCommonSettings(BaseSettings):
         
         return cls.model_fields[info.field_name].get_default()
 
-
 class DatasourcePayloadConstructor(BaseModel, ABC):
     _settings: '_AppSettings' = PrivateAttr()
     
